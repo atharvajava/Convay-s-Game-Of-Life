@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit ,ViewChild,ElementRef} from '@angular/core';
 
 @Component({
   selector: 'app-board',
@@ -6,45 +6,60 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./board.component.scss']
 })
 export class BoardComponent implements OnInit {
+  @ViewChild("myCanvas") can: ElementRef; 
   update:any;
   draw:any;
   start:any;
   running:any;
   isDebug:any;
+  box:any;
+  context:any;
+  canvas:any;
+
+  setting:any={
+    rows:10,
+    cols:10,
+    width:30,
+    height:30,
+    fps:30
+  };
 
   constructor() { }
 
   ngOnInit() {
+    let can=(<HTMLElement>document.getElementById("myCanvas"));
+    this.canvas=this.can;
+    let c:CanvasRenderingContext2D=this.can.nativeElement.getContext("2d");
+    this.context=c;
+    //context.fillStyle = 'blue';
+    //context.fillRect(10, 10, 150, 150);//x-axis , y-axis , width , heigh
+    this.init()
+
   }
 
-  game(){
-    let me=this;
-    me.running=false;
-    me.isDebug=true;
-    me.update=(delta)=>{
-      
-    }
-    me.draw=(delta)=>{
-
-    }
-    me.start=()=>{
-      me.running=true;
-
-      let lastTime=Date.now();
-      (function mainloop(){
-        if(!me.running) return;
-
-        let current=Date.now();
-        let elapsed=current-lastTime;
-        window.requestAnimationFrame(mainloop);
-
-        //Update /Draw
-        me.update(elapsed);
-        me.draw(elapsed);
-
-        lastTime=current;
-      })();
-    }
-    return me;
+  init(){
+      this.box=new Image();
+      this.box.src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/16777216colors.png/220px-16777216colors.png";
+      this.drawCanvas();
   }
+  drawCanvas(){
+    let c=this.context;
+    let boxSize = 15,
+    boxes = Math.floor(600 / boxSize);
+     c.beginPath();
+  c.fillStyle = "white";
+  c.lineWidth = 1;
+  c.strokeStyle = 'green';
+  for (var row = 0; row < boxes; row++) {
+    for (var column = 0; column < boxes; column++) {
+      var x = column * boxSize;
+      var y = row * boxSize;
+      c.rect(x, y, boxSize, boxSize);
+      c.fill();
+      c.stroke();
+    }
+  }
+  c.closePath();
 }
+}
+

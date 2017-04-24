@@ -6,6 +6,8 @@ import { Component, OnInit ,ViewChild,ElementRef,Renderer2} from '@angular/core'
   styleUrls: ['./board.component.scss']
 })
 export class BoardComponent implements OnInit {
+  //The view child tag is necessary so as to use canvas in angular 2
+  //this gets the Element Reference directive to this component
   @ViewChild("myCanvas") can: ElementRef; 
 
   box:any;
@@ -23,11 +25,21 @@ export class BoardComponent implements OnInit {
   constructor(private renderer:Renderer2) { }
 
   ngOnInit() {
+    //This is how we initiate canvas in Angular 2
     let can=(<HTMLElement>document.getElementById("myCanvas"));
     this.canvas=this.can;
     let c:CanvasRenderingContext2D=this.can.nativeElement.getContext("2d");
+
+    // this way of rendering mouse events helps target seperate greid on canvas which is not really possible when using
+    // the (click) event on html element doesnt target seperate grid element
+    // This is because that click event is attached to the whole canvas.
     this.renderer.listen(this.can.nativeElement, 'click', (evt) => {
+    let boxSize=15;
     console.log('Clicking the button', evt);
+    c.fillStyle = "black";
+    c.fillRect(Math.floor(evt.offsetX / boxSize) * boxSize,
+    Math.floor(evt.offsetY / boxSize) * boxSize,
+    boxSize, boxSize);
 });
     this.context=c;
     //context.fillStyle = 'blue';
